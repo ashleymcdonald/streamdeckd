@@ -23,7 +23,8 @@ func (c *CounterIconHandler) Start(k api.Key, info api.StreamDeckInfo, callback 
 		img := image.NewRGBA(image.Rect(0, 0, info.IconSize, info.IconSize))
 		draw.Draw(img, img.Bounds(), image.Black, image.ZP, draw.Src)
 		Count := strconv.Itoa(c.Count)
-		imgParsed, err := api.DrawText(img, Count, k.TextSize, k.TextAlignment)
+		size, _ := strconv.ParseInt(k.IconHandlerFields["text_size"], 10, 0)
+		imgParsed, err := api.DrawText(img, Count, int(size), k.TextAlignment)
 		if err != nil {
 			log.Println(err)
 		} else {
@@ -62,5 +63,5 @@ func RegisterCounter() handlers.Module {
 		return &CounterIconHandler{Running: true, Count: 0}
 	}, NewKey: func() api.KeyHandler {
 		return &CounterKeyHandler{}
-	}, Name: "Counter"}
+	}, Name: "Counter", IconFields: []api.Field{{Title: "Text Size", Name: "text_size", Type: "Number"}}}
 }
